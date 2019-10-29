@@ -8,16 +8,8 @@ import scipy.optimize as sco
 plt.style.use('fivethirtyeight')
 np.random.seed(777)
 
-quandl.ApiConfig.api_key = "I'm not putting my key on github"
+quandl.ApiConfig.api_key = "g-voHDJicLmsh1JPUkc8"
 stocks = ['AAPL','AMZN','GOOGL','FB']
-data = quandl.get_table('WIKI/PRICES', ticker = stocks,
-    qopts = { 'columns': ['date', 'ticker', 'adj_close'] },
-    date = { 'gte': '2016-1-1', 'lte': '2017-12-31' }, paginate=True)
-df = data.set_index('date')
-table = df.pivot(columns='ticker')
-# By specifying col[1] in below list comprehension
-# You can select the stock names under multi-level column
-table.columns = [col[1] for col in table.columns]
 
 def portfolio_annualised_performance(weights, mean_returns, cov_matrix):
     returns = np.sum(mean_returns*weights ) *252
@@ -127,5 +119,21 @@ def efficient_frontier(mean_returns, cov_matrix, returns_range):
     for ret in returns_range:
         efficients.append(efficient_return(mean_returns, cov_matrix, ret))
     return efficients
+
+# Some prep stuff
+data = quandl.get_table('WIKI/PRICES', ticker = stocks,
+    qopts = { 'columns': ['date', 'ticker', 'adj_close'] },
+    date = { 'gte': '2016-1-1', 'lte': '2017-12-31' }, paginate=True)
+df = data.set_index('date')
+table = df.pivot(columns='ticker')
+# By specifying col[1] in below list comprehension
+# You can select the stock names under multi-level column
+table.columns = [col[1] for col in table.columns]
+
+returns = table.pct_change()
+mean_returns = returns.mean()
+cov_matrix = returns.cov()
+num_portfolios = 25000
+risk_free_rate = 0.0178
 
 display_calculated_ef_with_random(mean_returns, cov_matrix, num_portfolios, risk_free_rate)
