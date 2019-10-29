@@ -71,6 +71,7 @@ def display_calculated_ef_with_random(mean_returns, cov_matrix, num_portfolios, 
     plt.xlabel('annualised volatility')
     plt.ylabel('annualised returns')
     plt.legend(labelspacing=0.8)
+    plt.show(block=True)
 
 def neg_sharpe_ratio(weights, mean_returns, cov_matrix, risk_free_rate):
     p_var, p_ret = portfolio_annualised_performance(weights, mean_returns, cov_matrix)
