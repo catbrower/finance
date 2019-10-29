@@ -8,7 +8,7 @@ import scipy.optimize as sco
 plt.style.use('fivethirtyeight')
 np.random.seed(777)
 
-quandl.ApiConfig.api_key = "g-voHDJicLmsh1JPUkc8"
+quandl.ApiConfig.api_key = "get yer own code"
 stocks = ['AAPL','AMZN','GOOGL','FB']
 
 def portfolio_annualised_performance(weights, mean_returns, cov_matrix):
