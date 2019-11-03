@@ -10,10 +10,9 @@ np.random.seed(777)
 
 quandl.ApiConfig.api_key = "www.quandl.com"
 stocks = ['AAPL','AMZN','GOOGL','FB']
+
 with open("quandl.key", "r") as f:
     quandl.ApiConfig.api_key = f.read().strip()
-
-print(quandl.ApiConfig.api_key)
 
 def portfolio_annualised_performance(weights, mean_returns, cov_matrix):
     returns = np.sum(mean_returns*weights ) *252
