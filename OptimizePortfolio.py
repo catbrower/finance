@@ -4,15 +4,11 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import quandl
 import scipy.optimize as sco
+import QuandlFetch
 
 plt.style.use('fivethirtyeight')
 np.random.seed(777)
-
-quandl.ApiConfig.api_key = "www.quandl.com"
 stocks = ['AAPL','AMZN','GOOGL','FB']
-
-with open("quandl.key", "r") as f:
-    quandl.ApiConfig.api_key = f.read().strip()
 
 def portfolio_annualised_performance(weights, mean_returns, cov_matrix):
     returns = np.sum(mean_returns*weights ) *252
@@ -124,14 +120,7 @@ def efficient_frontier(mean_returns, cov_matrix, returns_range):
         efficients.append(efficient_return(mean_returns, cov_matrix, ret))
     return efficients
 
-# Some prep stuff
-data = quandl.get_table('WIKI/PRICES', ticker = stocks,
-    qopts = { 'columns': ['date', 'ticker', 'adj_close'] },
-    date = { 'gte': '2016-1-1', 'lte': '2017-12-31' }, paginate=True)
-df = data.set_index('date')
-table = df.pivot(columns='ticker')
-# By specifying col[1] in below list comprehension
-# You can select the stock names under multi-level column
+table = QuandlFetch.getStocks(stocks)
 table.columns = [col[1] for col in table.columns]
 
 returns = table.pct_change()
