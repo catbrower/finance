@@ -3,6 +3,8 @@ import quandl
 import numpy
 import sys
 
+import util
+
 quandl.ApiConfig.api_key = "www.quandl.com"
 TICKER_LIMIT = 50
 
@@ -27,7 +29,5 @@ def getStocks(stockArray, startDate, endDate = None):
         return data
     else:
         df = data.set_index('date')
-        df = df.pivot(columns='ticker')['adj_close']
-        df.to_csv('data/tmp_data.csv')
-        df = pd.read_csv('data/tmp_data.csv', parse_dates=True, index_col="date")
-        return df
+        df = df.pivot(columns='ticker')
+        return util.convertDataframe(df)
