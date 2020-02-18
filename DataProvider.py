@@ -1,7 +1,6 @@
 import math
 import pandas as pd
 from threading import Lock, Thread
-from DiscreteAllocation import get_latest_prices
 
 import util
 import QuandlFetch
@@ -33,13 +32,6 @@ class DataProvider:
 
         return data
 
-    #Type of date is unknown so just pass in whatever and try to convert it
-    def dateToStr(self, date):
-        try:
-            return date.strftime("%Y:%m:%d")
-        except:
-            return date
-
     #Row should be a date, and columns tickers
     def historyHasValues(self, tickers, startDate, endDate = None):
         if(self.history.empty):
@@ -68,9 +60,6 @@ class DataProvider:
         else:
             result = self.history.loc[index][stocks]
 
-        a = self.history.loc[index]
-        b = a[stocks]
-
         return result
 
     #I'm not reall sure how this data is stored...
@@ -90,8 +79,9 @@ class DataProvider:
             else:
                 return self.retrieveDataFromWeb(stocks, startDate, startDate)
         else:
-            endDateStr = self.dateToStr(endDate)
+            endDateStr = util.getDateAsString(endDate)
             if(self.historyHasValues([startDate, endDate], stocks)):
                 return self.history.loc[startDate, endDateStr][stocks]
             else:
                 return self.retrieveDataFromWeb(stocks, startDate, endDateStr)
+
