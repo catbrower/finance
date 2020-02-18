@@ -2,14 +2,14 @@ import math
 import pandas as pd
 from threading import Lock, Thread
 
-import util
 import QuandlFetch
+from util import dateHelper, dataframeHelper, util
 
 #it would be nice to add a way to stash all this to disk
 class DataProvider:
     def __init__(self):
         self.historyLock = Lock()
-        self.history = util.getEmptyDataFrame()
+        self.history = dataframeHelper.getEmptyDataFrame()
         self.maxTickers = 25
 
     def setHistory(self, newHistory):
@@ -27,8 +27,8 @@ class DataProvider:
         data = pd.DataFrame()
 
         for group in dividedStocks:
-            data = util.combineDataFrames(data, QuandlFetch.getStocks(group, startDate, endDate))
-            self.setHistory(util.combineDataFrames(self.history, data))
+            data = dataframeHelper.combineDataFrames(data, QuandlFetch.getStocks(group, startDate, endDate))
+            self.setHistory(dataframeHelper.combineDataFrames(self.history, data))
 
         return data
 
@@ -65,10 +65,10 @@ class DataProvider:
     #I'm not reall sure how this data is stored...
     def getData(self, stocks, startDate, endDate = None):
         #Ensure dates are in correct format
-        if(not util.isDateFormatCorrect(startDate)):
+        if(not dateHelper.isDateFormatCorrect(startDate)):
             util.printErrorAndDie('DataProvider.getData: start date is incorrect format')
 
-        if((not endDate == None) and (not util.isDateFormatCorrect(startDate))):
+        if((not endDate == None) and (not dateHelper.isDateFormatCorrect(startDate))):
             util.printErrorAndDie('DataProvider.getData: end date is incorrect format')
 
         if(endDate == None):
@@ -79,7 +79,7 @@ class DataProvider:
             else:
                 return self.retrieveDataFromWeb(stocks, startDate, startDate)
         else:
-            endDateStr = util.getDateAsString(endDate)
+            endDateStr = dateHelper.getDateAsString(endDate)
             if(self.historyHasValues([startDate, endDate], stocks)):
                 return self.history.loc[startDate, endDateStr][stocks]
             else:

@@ -1,15 +1,15 @@
 import csv
 import sys
 import pandas as pd
-from threading import Lock, Thread
 from datetime import datetime
+from threading import Lock, Thread
 
 from pypfopt import risk_models
 from pypfopt import expected_returns
 from pypfopt.efficient_frontier import EfficientFrontier
 from pypfopt.discrete_allocation import DiscreteAllocation
 
-import util
+from util import dateHelper, util
 from DataProvider import DataProvider
 
 GAMMA = 1
@@ -55,10 +55,10 @@ class BalancePortfolio:
     #Quandl does not have data after 2018-03-07
     def getPortfolio(self, endDate):
         #Ensure dates are in correct format
-        if(not util.isDateFormatCorrect(endDate)):
+        if(not dateHelper.isDateFormatCorrect(endDate)):
             util.printErrorAndDie('DataProvider.getData: start date is incorrect format')
 
-        startDate = util.subtractDaysFromDate(endDate, self.lookbackDays)
+        startDate = dateHelper.subtractDaysFromDate(endDate, self.lookbackDays)
         threads = [Thread(target=self.calcWeights, args=([x, startDate, endDate])) for x in self.allStocks]
         [x.start() for x in threads]
         [x.join() for x in threads]
