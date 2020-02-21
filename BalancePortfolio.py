@@ -53,7 +53,7 @@ class BalancePortfolio:
         self.sectorPortfolioLock.release()
 
     #Quandl does not have data after 2018-03-07
-    def getPortfolio(self, endDate):
+    def getPortfolio(self, endDate, value):
         #Ensure dates are in correct format
         if(not dateHelper.isDateFormatCorrect(endDate)):
             util.printErrorAndDie('DataProvider.getData: start date is incorrect format')
@@ -64,4 +64,10 @@ class BalancePortfolio:
         [x.join() for x in threads]
 
         data = self.dataProvider.getData(self.sectorPortfolios, startDate, endDate)
-        return pd.Series(self.getWeights(self.markowitz(data)))
+        
+        weights = self.getWeights(self.markowitz(data))
+        latest_prices = data.loc[endDate]
+        da = DiscreteAllocation(weights, latest_prices, total_portfolio_value=value)
+        allocation, leftover = da.lp_portfolio()
+
+        return pd.Series(allocation)

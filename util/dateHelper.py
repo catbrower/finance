@@ -2,6 +2,7 @@ import sys
 from datetime import datetime, timedelta
 
 DATE_FORMAT = '%Y-%m-%d'
+HOLIDAYS = []
 
 def getDateAsDatetime(date):
     if(isinstance(date, datetime)):

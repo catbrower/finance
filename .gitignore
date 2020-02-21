@@ -1,3 +1,6 @@
 .vscode
 pipfile.lock
 quandl.key
+
+./__pycache__
+.pytest_cache
